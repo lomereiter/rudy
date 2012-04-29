@@ -44,18 +44,12 @@ class RudyObject {
     VALUE ptr() { return rubyval; }
     
     /* D operator overloading */
-    /* FIXME: I don't get it how to overload opEquals :-( */
-    bool opEquals(const RudyObject other) @safe const pure nothrow {
-        return opEquals(other);
+    override bool opEquals(Object other) {
+        auto rhs = cast(RudyObject)other;
+        if (!rhs) return false;
+        return Qtrue == rb_equal(rubyval, rhs.rubyval);
     }
 
-    bool opEquals(ref const RudyObject other) @safe const pure nothrow {
-        uint res = rb_equal(rubyval, other.rubyval);
-        //handle_exception();
-        return res == Qtrue;
-    }
-
-    
     /* conversions */
     RudyObject to_s()
     {

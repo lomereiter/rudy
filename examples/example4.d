@@ -8,7 +8,7 @@ extern (C) VALUE compare_wrapped_strings(VALUE self, VALUE obj1, VALUE obj2)
   char[] s2 = d_type!(char[])(obj2);
   auto val1 = new RudyObject(to_ruby_value(s1)); // or: new RudyObject(val1)
   auto val2 = new RudyObject(to_ruby_value(s2));
-  return to_ruby_value(val1.opEquals(val2));
+  return to_ruby_value(val1 == val2);
 }
 
 import std.string;
