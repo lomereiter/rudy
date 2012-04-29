@@ -1,15 +1,10 @@
 module bcd.ruby;
 
-// ripoff from PyD's python.d BEGIN
-version (Tango) {
-    import tango.stdc.stdio;
-    import tango.stdc.time;
-    import tango.stdc.string;
-} else {
-    import std.c.stdio;
-    import std.c.time;
-    import std.c.string;
-}
+import std.conv : octal;
+
+import std.c.stdio;
+import std.c.time;
+import std.c.string;
 
 /* D long is always 64 bits, but when the Ruby/C API mentions long, it is of
  * course referring to the C type long, the size of which is 32 bits on both
@@ -454,23 +449,23 @@ const int _IO_USER_LOCK = 0x8000;
 const int _IO_FLAGS2_MMAP = 1;
 const int _IO_FLAGS2_NOTCANCEL = 2;
 const int _IO_FLAGS2_USER_WBUF = 8;
-const int _IO_SKIPWS = 01;
-const int _IO_LEFT = 02;
-const int _IO_RIGHT = 04;
-const int _IO_INTERNAL = 010;
-const int _IO_DEC = 020;
-const int _IO_OCT = 040;
-const int _IO_HEX = 0100;
-const int _IO_SHOWBASE = 0200;
-const int _IO_SHOWPOINT = 0400;
-const int _IO_UPPERCASE = 01000;
-const int _IO_SHOWPOS = 02000;
-const int _IO_SCIENTIFIC = 04000;
-const int _IO_FIXED = 010000;
-const int _IO_UNITBUF = 020000;
-const int _IO_STDIO = 040000;
-const int _IO_DONT_CLOSE = 0100000;
-const int _IO_BOOLALPHA = 0200000;
+const int _IO_SKIPWS = 1;
+const int _IO_LEFT = 2;
+const int _IO_RIGHT = 4;
+const int _IO_INTERNAL = octal!10;
+const int _IO_DEC = octal!20;
+const int _IO_OCT = octal!40;
+const int _IO_HEX = octal!100;
+const int _IO_SHOWBASE = octal!200;
+const int _IO_SHOWPOINT = octal!400;
+const int _IO_UPPERCASE = octal!1000;
+const int _IO_SHOWPOS = octal!2000;
+const int _IO_SCIENTIFIC = octal!4000;
+const int _IO_FIXED = octal!10000;
+const int _IO_UNITBUF = octal!20000;
+const int _IO_STDIO = octal!40000;
+const int _IO_DONT_CLOSE = octal!100000;
+const int _IO_BOOLALPHA = octal!200000;
 const int _IOFBF = 0;
 const int _IOLBF = 1;
 const int _IONBF = 2;
@@ -862,8 +857,8 @@ extern (C) uint rb_funcall2(uint, uint, int, uint *);
 extern (C) int sched_yield();
 extern (C) int vprintf(char *, char *);
 extern (C) int remove(char *);
-extern (C) void rb_load_file(char *);
-extern (C) uint rb_str_new(char *, int);
+extern (C) void rb_load_file(const char *);
+extern (C) uint rb_str_new(const char *, int);
 extern (C) int wctomb(char *, wchar);
 extern (C) void rb_backtrace();
 extern (C) uint rb_tainted_str_new2(char *);
@@ -1057,8 +1052,7 @@ extern (C) int getw(_IO_FILE *);
 extern (C) void funlockfile(_IO_FILE *);
 extern (C) int setitimer(int, itimerval *, itimerval *);
 extern (C) int rb_const_defined_at(uint, uint);
-//extern (C) void rb_define_module_function(uint, char *, _BCD_func__1839, int);
-extern (C) void rb_define_module_function(uint, char *, VALUE(*)(), int);
+extern (C) void rb_define_module_function(uint, const char *, VALUE function(), int);
 extern (C) int feof_unlocked(_IO_FILE *);
 extern (C) int jrand48(ushort *);
 extern (C) int printf(char *, ...);
@@ -1252,7 +1246,7 @@ extern (C) int pthread_cond_broadcast(pthread_cond_t *);
 extern (C) uint rb_str_resize(uint, int);
 extern (C) uint rb_gv_set(char *, uint);
 extern (C) uint rb_io_ungetc(uint, uint);
-extern (C) uint rb_define_class(char *, uint);
+extern (C) uint rb_define_class(const char *, uint);
 extern (C) char * tempnam(char *, char *);
 extern (C) int pthread_getaffinity_np(uint, uint, cpu_set_t *);
 extern (C) uint rb_singleton_class(uint);
@@ -1554,7 +1548,7 @@ extern (C) uint rb_reg_match_last(uint);
 extern (C) int fclose(_IO_FILE *);
 extern (C) int pthread_mutex_consistent_np(pthread_mutex_t *);
 extern (C) int clock();
-extern (C) uint rb_equal(uint, uint);
+extern (C) @safe pure nothrow uint rb_equal(uint, uint);
 extern (C) int rb_proc_exec(char *);
 
 VALUE INT2FIX(long i)
@@ -1805,7 +1799,7 @@ extern (C) void rb_invalid_str(char *, char *);
 extern (C) uint rb_autoload_p(uint, uint);
 extern (C) int ferror_unlocked(_IO_FILE *);
 extern (C) uint rb_block_dup(uint, uint, uint);
-extern (C) uint rb_iv_set(uint, char *, uint);
+extern (C) uint rb_iv_set(uint, const char *, uint);
 extern (C) void rb_sys_warning(char *, ...);
 extern (C) uint rb_str_buf_append(uint, uint);
 extern (C) uint rb_io_binmode(uint);
@@ -1853,7 +1847,7 @@ extern (C) uint rb_mod_init_copy(uint, uint);
 alias uint function(uint, uint, int) _BCD_func__1940;
 extern (C) uint rb_exec_recursive(_BCD_func__1940, uint, uint);
 //extern (C) void rb_define_method(uint, char *, _BCD_func__1839, int);
-extern (C) void rb_define_method(VALUE, char*,VALUE(*)(),int);
+extern (C) void rb_define_method(VALUE, const char*, VALUE function(),int);
 extern (C) int vdprintf(int, char *, char *);
 extern (C) _IO_FILE * open_memstream(char * *, uint *);
 extern (C) int rb_memcmp(void *, void *, int);
@@ -1879,7 +1873,7 @@ extern (C) int pthread_cond_timedwait(pthread_cond_t *, pthread_mutex_t *, times
 extern (C) int pthread_rwlock_timedwrlock(pthread_rwlock_t *, timespec *);
 extern (C) char * index(char *, int);
 extern (C) char * rb_obj_classname(uint);
-extern (C) uint rb_intern(char *);
+extern (C) uint rb_intern(const char *);
 extern (C) int timer_gettime(void *, itimerspec *);
 extern (C) uint strlen(char *);
 extern (C) int nrand48(ushort *);
@@ -1951,7 +1945,7 @@ extern (C) void * mempcpy(void *, void *, uint);
 extern (C) uint rb_yield(uint);
 extern (C) void rb_name_error(uint, char *, ...);
 extern (C) int rb_during_gc();
-extern (C) uint rb_define_module(char *);
+extern (C) uint rb_define_module(const char *);
 extern (C) uint rb_struct_aref(uint, uint);
 extern (C) lldiv_t lldiv(long, long);
 extern (C) uint rb_tainted_str_new(char *, int);
@@ -1997,7 +1991,7 @@ __pthread_internal_slist * __next;
 }
 union N6RArray4__26E {
 int capa;
-uint shared;
+uint _shared;
 }
 struct RArray {
 RBasic basic;
@@ -2016,7 +2010,7 @@ double value;
 }
 union N7RString4__25E {
 int capa;
-uint shared;
+uint _shared;
 }
 struct RString {
   RBasic basic;
@@ -2312,7 +2306,7 @@ extern (C) extern uint rb_eFloatDomainError;
 extern (C) extern uint rb_stdin;
 extern (C) extern uint rb_cFloat;
 extern (C) extern uint rb_eNoMethodError;
-extern (C) extern uint rb_cObject;
+extern (C) extern shared uint rb_cObject;
 extern (C) extern int ruby_safe_level;
 extern (C) extern uint rb_eLoadError;
 extern (C) extern int __daylight;
@@ -2353,7 +2347,7 @@ extern (C) extern uint rb_cStruct;
 extern (C) extern uint rb_eException;
 extern (C) extern uint rb_eIndexError;
 extern (C) extern uint rb_cNumeric;
-extern (C) extern uint rb_cNilClass;
+extern (C) extern shared uint rb_cNilClass;
 extern (C) extern char * [1] _sys_errlist;
 extern (C) extern uint rb_mGC;
 extern (C) extern uint rb_eLocalJumpError;

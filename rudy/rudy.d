@@ -16,20 +16,19 @@ public {
 
 }
 
-/* make D's GC work with C-oriented functions
- * straight from PyD:
- * http://dsource.org/projects/pyd/browser/trunk/infrastructure/d/python_so_linux_boilerplate.d
+/*
+ * Currently, runtime_initialize must be called explicitly,
+ * for instance, from Init_* function
  */
-extern(C) {
-  void gc_init();
-  void gc_term();
-  
-  void _init() {
-    gc_init();
-  }
-  
-  void _fini() {
-    gc_term();
+import core.runtime : Runtime;
+
+extern (C) void runtime_initialize() {
+    Runtime.initialize();
 }
 
-} /* extern(C) */
+extern (C) void runtime_terminate() {
+    Runtime.terminate();
+}
+
+/* for _deh_beg and such */
+void main() {}

@@ -10,8 +10,10 @@ extern (C) VALUE t_init(VALUE self)
   return self;
 }
 
+import core.runtime : Runtime;
 extern (C) void Init_1()
 {
+  Runtime.initialize();
   VALUE klass = rb_define_class("SomeClass", rb_cObject);
   rb_define_method(klass, "initialize", &t_init, 0);
 }

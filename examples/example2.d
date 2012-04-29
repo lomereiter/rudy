@@ -40,7 +40,7 @@ extern (C) VALUE return_array_of_strings(VALUE self)
 extern (C) VALUE return_hash_of_floats();
 extern (C) VALUE return_hash_of_floats(VALUE self)
 {
-  double[char[]] h;
+  double[string] h;
   h["registry"] = 30.0;
   h["plane"] = 165.5;
   h["hotel"] = 59.90;
@@ -49,8 +49,8 @@ extern (C) VALUE return_hash_of_floats(VALUE self)
 
 // The initialization method for this module
 extern (C) void Init_example2() {
+  runtime_initialize();  
   extern (C) VALUE ExampleModule = rb_define_module("ExampleModule");
-  
   rb_define_module_function(ExampleModule, "return_bool", &return_bool, 0);
   rb_define_module_function(ExampleModule, "return_null", &return_null, 0);
   rb_define_module_function(ExampleModule, "return_integer", &return_integer, 0);

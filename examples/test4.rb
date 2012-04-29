@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'example4'
+require './example4.so'
 require 'test/unit'
 
 class Example4Tester < Test::Unit::TestCase

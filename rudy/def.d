@@ -38,19 +38,19 @@ void def(char[] modulename, alias fn, char[] name = symbolnameof!(fn), fn_t=type
 {
     pragma(msg, "def: " ~ name ~ " in " ~ modulename);
     
-    VALUE parent_context = rb_const_get(rb_cObject, rb_intern((modulename ~ \0).ptr));
+    VALUE parent_context = rb_const_get(rb_cObject, rb_intern((modulename ~ "\0").ptr));
     
     if(rb_type(parent_context) == T_CLASS)
     {
-      rb_define_method(parent_context, (name ~ \0).ptr, &fn, MIN_ARGS);
+      rb_define_method(parent_context, (name ~ "\0").ptr, &fn, MIN_ARGS);
     }
     else if(rb_type(parent_context) == T_MODULE)
     {
-      rb_define_module_function(parent_context, (name ~ \0).ptr, &fn, MIN_ARGS);
+      rb_define_module_function(parent_context, (name ~ "\0").ptr, &fn, MIN_ARGS);
     }
     else  //no scope given or scope sucks: define a global (Object scope)
     {
-      rb_define_method(rb_cObject, (name ~ \0).ptr, &fn, MIN_ARGS);
+      rb_define_method(rb_cObject, (name ~ "\0").ptr, &fn, MIN_ARGS);
     }
     
 }

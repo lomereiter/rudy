@@ -30,7 +30,10 @@ package template isAA(T) {
 
 VALUE to_ruby_value(T) (T t)
 {
-  static if (is(T : bool)) 
+  static if(is(T : typeof(null))) {
+      return Qnil;
+  }
+  else static if (is(T : bool)) 
   {
       VALUE temp = (t) ? Qtrue : Qfalse;
       //Py_INCREF(temp); // -- we don't use it (yet)
@@ -56,12 +59,10 @@ VALUE to_ruby_value(T) (T t)
     VALUE cmplx = rb_funcall(complex_class, id_method_new, 2, to_ruby_value(t.re), to_ruby_value(t.im));
     return cmplx;
   } 
-  else static if (is(T : char[])) {
-      //return PyString_FromString((t ~ \0).ptr);
-      //to add or not to add \0 ?
+  else static if (is(T : string) || is(T : char[])) {
       return rb_str_new(t.ptr, t.length);
   } 
-  else static if (is(T : wchar[])) {
+  else static if (is(T : wstring) || is(T : wchar[])) {
       //return PyUnicode_FromWideChar(t, t.length);
       return rb_str_new(t.ptr, t.length);
   }
@@ -149,7 +150,7 @@ RudyObject ru(T) (T t)
  * An exception class used by d_type.
  */
 class RudyConversionException : Exception {
-    this(char[] msg) { super(msg); }
+    this(string msg) { super(msg); }
 }
 
 /*
@@ -178,7 +179,7 @@ T d_type(T) (VALUE val) {
     static if (is(T == void)) {
         //if (o != Py_None) could_not_convert!(T)(o);
         //Py_INCREF(Py_None);
-        return Qnil;
+        return Qnil; /* FIXME: WTF we're returning Ruby value????? */
     }
 
     //unicode strings  -- later

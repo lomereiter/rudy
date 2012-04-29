@@ -26,8 +26,8 @@ extern (C) VALUE cat_the_string(VALUE self, VALUE obj)
 
 // The initialization method for this module
 extern (C) void Init_example3() {
+  runtime_initialize();   // don't forget to initialize otherwise crashes will occur!
   extern (C) VALUE ExampleModule = rb_define_module("ExampleModule");
-  
   rb_define_module_function(ExampleModule, "sqrt_the_float", &sqrt_the_float, 1);
   rb_define_module_function(ExampleModule, "square_the_integer", &square_the_integer, 1);
   rb_define_module_function(ExampleModule, "cat_the_string", &cat_the_string, 1);

@@ -55,7 +55,7 @@ template demangleType(char[] str, MangledNameType wantQualifiedNames = MangledNa
     else static if (str[0]=='E')
         const char [] demangleType = "enum " ~ prettyLname!(str[1..$], wantQualifiedNames);
     else static if (str[0]=='T')
-        const char [] demangleType = "typedef " ~ prettyLname!(str[1..$], wantQualifiedNames);
+        const char [] demangleType = "alias " ~ prettyLname!(str[1..$], wantQualifiedNames);
     else static if (str[0]=='D' && str.length>2 && isMangledFunction!(( str[1] )) ) // delegate
         const char [] demangleType = demangleFunctionOrDelegate!(str[1..$], "delegate ", wantQualifiedNames);
     else static if (str[0]=='P' && str.length>2 && isMangledFunction!(( str[1] )) ) // function pointer
@@ -161,7 +161,7 @@ template getLname(char [] str)
 }
 
 // Deal with the case where an Lname contains an embedded "__D".
-// This can happen when classes, typedefs, etc are declared inside a function.
+// This can happen when classes, aliass, etc are declared inside a function.
 template pretty_Dname(char [] str, int dotnameconsumed, MangledNameType wantQualifiedNames)
 {
     static if ( isMangledFunction!( (str[2+dotnameconsumed]))) {
@@ -477,16 +477,16 @@ ifloat SomeFunc4(lazy void[] x...) { return 2i; }
 char[dchar] SomeFunc5(lazy int delegate()[] z...);
 
 extern (Windows) {
-    typedef void function (double, long) WinFunc;
+    alias void function (double, long) WinFunc;
 }
 extern (Pascal) {
-    typedef short[wchar] delegate (bool, ...) PascFunc;
+    alias short[wchar] delegate (bool, ...) PascFunc;
 }
 extern (C) {
-    typedef dchar delegate () CFunc;
+    alias dchar delegate () CFunc;
 }
 extern (C++) {
-    typedef cfloat function (wchar) CPPFunc;
+    alias cfloat function (wchar) CPPFunc;
 }
 
 interface SomeInterface {}
